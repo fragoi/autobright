@@ -1,0 +1,7 @@
+Package: @package@
+Version: @version@
+Priority: optional
+Architecture: amd64
+Maintainer: fragoi <fragoidev@gmail.com>
+Depends: libglib2.0-bin (>= 2.64)
+Description: Automatically adjust screen brightness using light sensor

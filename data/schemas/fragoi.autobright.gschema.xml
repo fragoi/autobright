@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE schemalist SYSTEM "https://gitlab.gnome.org/GNOME/glib/-/raw/HEAD/gio/gschema.dtd">
+<schemalist>
+  <schema id="fragoi.autobright" path="/fragoi/autobright/">
+    <key name="offset" type="i">
+      <default>0</default>
+      <range min="-100" max="100" />
+      <summary>Sensor value offset</summary>
+      <description>
+        Brightness is calculated by adding this to the value from sensor.
+        This value can be changed by manually adjusting screen brightness.
+      </description>
+    </key>
+  </schema>
+</schemalist>
