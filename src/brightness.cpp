@@ -1,8 +1,11 @@
 #include "brightness.h"
+#include "logger.h"
 
 using namespace std;
 using namespace gdbus;
 using namespace promise;
+
+static const Logger logger("[BrightnessProxy]");
 
 static const Setter<int> brightnessSetter { "Brightness", "i" };
 
@@ -16,6 +19,9 @@ inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {
   if (brightness) {
     int value = g_variant_get_int32(brightness.get());
     BrightnessProxyPrivate::setBrightness(self, value);
+  } else {
+    // TODO: fix this, I need the value when the proxy is "ready"
+    LOGGER_WARN(logger) << "Brightness from cache is null" << endl;
   }
 }
 
