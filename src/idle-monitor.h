@@ -10,7 +10,7 @@
 
 namespace idle {
 
-  struct WatchFired: public signals::Signal<void(int)> {
+  struct WatchFired: public signals::Signal<void(int, int&)> {
       splist::List<P> handlers() {
         return this->Signal::handlers;
       }
@@ -33,7 +33,7 @@ namespace idle {
         this->interval = interval;
       }
 
-      void operator()(int key) {
+      void operator()(int key, int &handled) {
         if (this->key != key)
           return;
 
@@ -41,6 +41,7 @@ namespace idle {
           signal->remove(*this);
 
         handler();
+        handled++;
       }
   };
 

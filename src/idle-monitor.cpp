@@ -103,8 +103,11 @@ void IdleMonitorProxyPrivate::setProxy(
 void IdleMonitorProxyPrivate::onWatchFired(
     IdleMonitorProxy *self,
     int key) {
-  LOGGER_DEBUG(_logger) << "WatchFired: " << key << endl;
-  self->watchFired(key);
+  int handled = 0;
+  self->watchFired(key, handled);
+  if (handled != 1) {
+    LOGGER_WARN(_logger) << "watchFired handled: " << handled << endl;
+  }
 }
 
 WatchBase* IdleMonitorProxyPrivate::findWatch(
