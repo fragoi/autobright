@@ -18,7 +18,7 @@ class BrightnessProxy: public IBrightnessProxy {
     friend class BrightnessProxyPrivate;
 
     gdbus::PGDBusProxy proxy;
-    int brightness = 0;
+    int brightness = -1;
 
   public:
     promise::Promise<void> connect();
