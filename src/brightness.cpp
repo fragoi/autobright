@@ -4,6 +4,7 @@
 using namespace std;
 using namespace gdbus;
 using namespace promise;
+using namespace signals;
 
 static const Logger logger("[BrightnessProxy]");
 
@@ -12,6 +13,17 @@ static const Setter<int> brightnessSetter { "Brightness", "i" };
 struct BrightnessProxyPrivate {
     static void setProxy(BrightnessProxy *self, PGDBusProxy proxy);
     static void setBrightness(BrightnessProxy *self, int value);
+    static Promise<void> ensureBrightness(BrightnessProxy *self);
+};
+
+struct ResolveOnEmit {
+    Signal<void()> *signal;
+    Result<void> result;
+
+    void operator()() {
+      signal->remove(*this);
+      result.resolve();
+    }
 };
 
 inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {
@@ -19,9 +31,6 @@ inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {
   if (brightness) {
     int value = g_variant_get_int32(brightness.get());
     BrightnessProxyPrivate::setBrightness(self, value);
-  } else {
-    // TODO: fix this, I need the value when the proxy is "ready"
-    LOGGER_WARN(logger) << "Brightness from cache is null" << endl;
   }
 }
 
@@ -65,6 +74,20 @@ void BrightnessProxyPrivate::setBrightness(BrightnessProxy *self, int value) {
   self->brightnessChanged();
 }
 
+Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
+  LOGGER(logger) << "Initial brightness: " << self->brightness << endl;
+
+  if (self->brightness >= 0)
+    return resolved();
+
+  Result<void> result;
+  Promise<void> promise = result;
+  self->brightnessChanged << ResolveOnEmit {
+      &self->brightnessChanged, result
+  };
+  return promise;
+}
+
 Promise<void> BrightnessProxy::connect() {
   if (proxy)
     return resolved();
@@ -77,6 +100,7 @@ Promise<void> BrightnessProxy::connect() {
 
   return p << [=](PGDBusProxy proxy) {
     BrightnessProxyPrivate::setProxy(this, proxy);
+    return BrightnessProxyPrivate::ensureBrightness(this);
   };
 }
 
