@@ -50,7 +50,7 @@ Autobright::~Autobright() {
 
 Promise<void> Autobright::connect() {
   return bright.connect() << [=] {
-    filter.setValue(bright.getBrightness());
+    filter.setValue(adapter.getValue());
     return sensor.connect();
   };
 }
