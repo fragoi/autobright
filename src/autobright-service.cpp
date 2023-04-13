@@ -39,9 +39,8 @@ static void onNameLost(
 }
 
 void AutobrightServicePrivate::connect(AutobrightService *self) {
-  self->autobright->connect().grab([=](exception_ptr exception) {
-    // TODO: simplify exception log
-    promise::LogException("Connect")(exception);
+  self->autobright->connect().grab([=](const exception_ptr &ex) {
+    LOGGER_ERROR(logger) << "Error connecting: " << ex << endl;
     quit(self, EXIT_FAILURE);
   });
 }
