@@ -7,7 +7,7 @@ using namespace gdbus;
 using namespace promise;
 using namespace idle;
 
-static const Logger _logger("[IdleMonitor]", Logger::DEBUG);
+static const Logger logger("[IdleMonitor]", Logger::DEBUG);
 
 static const Method<unsigned long()> _getIdletime {
     "GetIdletime"
@@ -25,7 +25,7 @@ static const Method<void()> _resetIdletime {
     "ResetIdletime"
 };
 
-const Logger IdleMonitorProxy::logger(_logger);
+const Logger IdleMonitorProxy::logger(::logger);
 
 struct IdleMonitorProxyPrivate {
     static void setProxy(IdleMonitorProxy *self, PGDBusProxy proxy);
@@ -62,11 +62,11 @@ static void onOwnerChanged(
   GDBusProxy *proxy = G_DBUS_PROXY(object);
   // TODO: check pointer type is correct
   unique_ptr<char> owner(g_dbus_proxy_get_name_owner(proxy));
-  LOGGER_DEBUG(_logger) << "Owner changed: " << owner.get() << endl;
+  LOGGER_DEBUG(logger) << "Owner changed: " << owner.get() << endl;
   if (!owner)
     return;
 
-  LOGGER_DEBUG(_logger) << "Just to see the function name: "
+  LOGGER_DEBUG(logger) << "Just to see the function name: "
       << __PRETTY_FUNCTION__ << endl;
 
   IdleMonitorProxy *self = (IdleMonitorProxy*) user_data;
@@ -106,7 +106,7 @@ void IdleMonitorProxyPrivate::onWatchFired(
   int handled = 0;
   self->watchFired(key, handled);
   if (handled != 1) {
-    LOGGER_WARN(_logger) << "watchFired handled: " << handled << endl;
+    LOGGER_WARN(logger) << "watchFired handled: " << handled << endl;
   }
 }
 
@@ -136,12 +136,12 @@ Promise<void> IdleMonitorProxyPrivate::refreshKey(
 
   return p << [=](int newKey) {
     if (compareAndSetKey(self, id, oldKey, newKey)) {
-      LOGGER(_logger) << "Refreshed "
+      LOGGER(logger) << "Refreshed "
           << (watch->interval ? "idle" : "user active")
           << " watch: " << oldKey << " -> " << newKey
           << endl;
     } else {
-      LOGGER_ERROR(_logger) << "Failed to refresh "
+      LOGGER_ERROR(logger) << "Failed to refresh "
           << (watch->interval ? "idle" : "user active")
           << " watch: " << oldKey << " -> " << newKey
           << endl;
