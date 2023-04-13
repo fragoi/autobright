@@ -83,4 +83,6 @@ class Logger {
     }
 };
 
+std::ostream& operator<<(std::ostream&, const std::exception_ptr&);
+
 #endif /* LOGGER_H_ */
