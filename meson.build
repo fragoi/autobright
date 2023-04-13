@@ -7,6 +7,7 @@ datadir = prefix / get_option('datadir')
 headers = [
   'src/adapter.h',
   'src/autobright.h',
+  'src/autobright-service.h',
   'src/brightness.h',
   'src/filter.h',
   'src/gdbus.h',
@@ -22,6 +23,7 @@ headers = [
 sources = [
   'src/adapter.cpp',
   'src/autobright.cpp',
+  'src/autobright-service.cpp',
   'src/brightness.cpp',
   'src/filter.cpp',
   'src/gdbus.cpp',
