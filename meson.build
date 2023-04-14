@@ -50,7 +50,6 @@ tests = {
   'gexception_test': 'test/gexception_test.cpp',
   'gobject_ptr_test': 'test/gobject_ptr_test.cpp',
   'idle_aware_test': 'test/idle_aware_test.cpp',
-  'idle_monitor_test': 'test/idle_monitor_test.cpp',
   'logger_test': 'test/logger_test.cpp',
   'promise_test': 'test/promise_test.cpp',
   'promisemm_test': 'test/promisemm_test.cpp',
@@ -58,6 +57,13 @@ tests = {
   'signals_test': 'test/signals_test.cpp',
   'signals2_test': 'test/signals2_test.cpp',
   'splist_test': 'test/splist_test.cpp',
+}
+
+manual_test = {
+  'brightness_manual_test': 'test/manual/brightness_test.cpp',
+  'idle_aware_manual_test': 'test/manual/idle_aware_test.cpp',
+  'idle_monitor_manual_test': 'test/manual/idle_monitor_test.cpp',
+  'sensor_manual_test': 'test/manual/sensor_test.cpp',
 }
 
 lib = static_library(meson.project_name(),
@@ -74,6 +80,13 @@ exe = executable(meson.project_name(),
   install: true)
 
 foreach name, source : tests
+  executable(name,
+    sources: source,
+    dependencies: dep,
+    link_args: ['-lpthread'])
+endforeach
+
+foreach name, source : manual_test
   executable(name,
     sources: source,
     dependencies: dep,

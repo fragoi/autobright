@@ -525,6 +525,11 @@ namespace _promise {
         return then<U>(forward<Fn>(fn), rethrow<U>);
       }
 
+//      template<typename Eh, typename U = TPromise<FnRet<Eh, exception_ptr>>>
+//      Promise<U> operator,(Eh &&eh) const {
+//        return grab<U>(forward<Eh>(eh));
+//      }
+
       template<typename >
       friend class Promise;
   };
