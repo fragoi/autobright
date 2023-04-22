@@ -80,10 +80,11 @@ exe = executable(meson.project_name(),
   install: true)
 
 foreach name, source : tests
-  executable(name,
+  test_exe = executable(name,
     sources: source,
     dependencies: dep,
     link_args: ['-lpthread'])
+  test(name, test_exe)
 endforeach
 
 foreach name, source : manual_test
