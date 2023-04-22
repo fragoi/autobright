@@ -38,8 +38,8 @@ sources = [
 
 dependencies = [
   dependency('gio-unix-2.0'),
-#  dependency('autobright-dbus',
-#    fallback: ['dbus', 'dep'])
+  dependency('autobright-dbus',
+    fallback: ['dbus', 'dep'])
 ]
 
 tests = {

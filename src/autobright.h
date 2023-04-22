@@ -26,8 +26,8 @@ class Autobright {
     int filtered = 0;
 
   public:
-    const signals::Signal<void()> &lightLevelChanged;
-    const signals::Signal<void()> &brightnessChanged;
+    signals::Signal<void()> &lightLevelChanged;
+    signals::Signal<void()> &brightnessChanged;
 
     Autobright(PGSettings gsettings = PGSettings());
     ~Autobright();
