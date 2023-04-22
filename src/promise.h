@@ -602,19 +602,19 @@ namespace promise {
   using std::exception_ptr;
   using std::rethrow_exception;
 
-  template<typename T>
-  Promise<T> resolved(const T &value) {
-    Result<T> result;
-    Promise<T> promise = result;
-    result.resolve(value);
-    return promise;
-  }
+//  template<typename T>
+//  Promise<T> resolved(const T &value) {
+//    Result<T> result;
+//    Promise<T> promise = result;
+//    result.resolve(value);
+//    return promise;
+//  }
 
   template<typename T>
   Promise<T> resolved(T &&value) {
     Result<T> result;
     Promise<T> promise = result;
-    result.resolve(std::move(value));
+    result.resolve(std::forward<T>(value));
     return promise;
   }
 
