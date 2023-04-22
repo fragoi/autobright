@@ -95,11 +95,11 @@ void AutobrightServicePrivate::quit(AutobrightService *self, int status) {
 }
 
 void AutobrightServicePrivate::updateDebug(AutobrightService *self) {
-  AutobrightDebug *debug = self->debug.get();
-  GDBusInterfaceSkeleton *iface = G_DBUS_INTERFACE_SKELETON(debug);
-  if (g_dbus_interface_skeleton_get_connection(iface)) {
-//    LOGGER(logger) << "I've a connection" << endl;
-  }
+  // TODO: if enabled
+  // TODO: update debug info on autobright
+  // TODO: copy debug info into skeleton
+//  AutobrightDebug *debug = self->debug.get();
+//  GDBusInterfaceSkeleton *iface = G_DBUS_INTERFACE_SKELETON(debug);
 }
 
 AutobrightService::AutobrightService(Autobright *autobright) :
