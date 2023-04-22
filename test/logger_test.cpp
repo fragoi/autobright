@@ -42,4 +42,11 @@ int main() {
   LOGGER(logger) << "default with macro (disabled)" << endl;
   LOGGER_DEBUG(logger) << "debug with macro (disabled)" << endl;
   LOGGER_INFO(logger) << "info with macro (disabled)" << endl;
+
+  logger = Logger("[Different Types]");
+
+  LOGGER(logger) << 1 << endl;
+  LOGGER(logger) << true << endl;
+  LOGGER(logger) << 'a' << endl;
+  LOGGER(logger) << 0.1 << endl;
 }

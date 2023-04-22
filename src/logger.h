@@ -42,7 +42,12 @@ class Logger {
     }
 
     template<typename T>
-    ostream& operator<<(T &&value) const {
+    ostream& operator<<(const T &value) const {
+      return _prefix(*out) << value;
+    }
+
+    template<typename T>
+    ostream& operator<<(const T *value) const {
       return _prefix(*out) << value;
     }
 
