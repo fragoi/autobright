@@ -163,7 +163,7 @@ void AutobrightServicePrivate::disableDebug(AutobrightService *self) {
   self->enable--;
   LOGGER(logger) << "Debug disabled, count: " << self->enable << endl;
 
-  /* reset to default */
+  /* reset to default, TODO: would be better to invalidate properties */
   if (self->enable == 0) {
     DebugInfo info;
     copyDebugInfo(&info, self->debug.get());
