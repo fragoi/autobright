@@ -54,3 +54,14 @@ Promise<void> Autobright::connect() {
     return sensor.connect();
   };
 }
+
+void Autobright::updateDebugInfo(DebugInfo *info) {
+  info->lightLevel = sensor.getLightLevel();
+  info->normalized = normalized;
+  //info->pressure = filter.
+  info->filtered = filtered;
+  info->value = adapter.getValue();
+  info->offset = adapter.getOffset();
+  info->brightness = bright.getBrightness();
+  //info->flags = bright.
+}

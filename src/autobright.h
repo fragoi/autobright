@@ -9,6 +9,7 @@
 #include "signals.h"
 #include "gsettings.h"
 #include "promise.h"
+#include "debug-info.h"
 
 class Autobright {
     friend class AutobrightPrivate;
@@ -33,6 +34,7 @@ class Autobright {
     ~Autobright();
 
     promise::Promise<void> connect();
+    void updateDebugInfo(DebugInfo*);
 };
 
 #endif /* AUTOBRIGHT_H_ */

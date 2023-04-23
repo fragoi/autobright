@@ -12,6 +12,6 @@
     <property name="Value" type="i" access="read" />
     <property name="Offset" type="i" access="read" />
     <property name="Brightness" type="i" access="read" />
-    <property name="Flags" type="s" access="read" />
+    <property name="Flags" type="i" access="read" />
   </interface>
 </node>

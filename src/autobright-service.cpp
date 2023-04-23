@@ -1,6 +1,7 @@
 #include <gio/gio.h>
 
 #include "autobright-service.h"
+#include "debug-info.h"
 #include "gexception.h"
 #include "logger.h"
 
@@ -10,9 +11,6 @@ static const Logger logger("[AutobrightService]", Logger::DEBUG);
 
 struct AutobrightServicePrivate {
     static void connectMethods(AutobrightService *self);
-    static void handleQuit(AutobrightService *self);
-    static void handleEnable(AutobrightService *self);
-    static void handleDisable(AutobrightService *self);
     static void onBusAcquired(
         AutobrightService *self,
         GDBusConnection *connection);
@@ -21,6 +19,8 @@ struct AutobrightServicePrivate {
         AutobrightService *self,
         GDBusConnection *connection);
     static void quit(AutobrightService *self, int status);
+    static void enableDebug(AutobrightService *self);
+    static void disableDebug(AutobrightService *self);
     static void updateDebug(AutobrightService *self);
 };
 
@@ -29,7 +29,7 @@ static gboolean handleQuit(
     GDBusMethodInvocation *invocation,
     gpointer user_data) {
   AutobrightService *self = (AutobrightService*) user_data;
-  AutobrightServicePrivate::handleQuit(self);
+  AutobrightServicePrivate::quit(self, EXIT_SUCCESS);
   autobright_debug_complete_quit(object, invocation);
   return TRUE;
 }
@@ -39,7 +39,7 @@ static gboolean handleEnable(
     GDBusMethodInvocation *invocation,
     gpointer user_data) {
   AutobrightService *self = (AutobrightService*) user_data;
-  AutobrightServicePrivate::handleEnable(self);
+  AutobrightServicePrivate::enableDebug(self);
   autobright_debug_complete_enable(object, invocation);
   return TRUE;
 }
@@ -49,7 +49,7 @@ static gboolean handleDisable(
     GDBusMethodInvocation *invocation,
     gpointer user_data) {
   AutobrightService *self = (AutobrightService*) user_data;
-  AutobrightServicePrivate::handleDisable(self);
+  AutobrightServicePrivate::disableDebug(self);
   autobright_debug_complete_disable(object, invocation);
   return TRUE;
 }
@@ -82,24 +82,22 @@ static void onNameLost(
   AutobrightServicePrivate::onNameLost(self, connection);
 }
 
+static void copyDebugInfo(DebugInfo *info, AutobrightDebug *debug) {
+  autobright_debug_set_light_level(debug, info->lightLevel);
+  autobright_debug_set_normalized(debug, info->normalized);
+  autobright_debug_set_pressure(debug, info->pressure);
+  autobright_debug_set_filtered(debug, info->filtered);
+  autobright_debug_set_value(debug, info->value);
+  autobright_debug_set_offset(debug, info->offset);
+  autobright_debug_set_brightness(debug, info->brightness);
+  autobright_debug_set_flags(debug, info->flags);
+}
+
 void AutobrightServicePrivate::connectMethods(AutobrightService *self) {
   AutobrightDebug *debug = self->debug.get();
   g_signal_connect(debug, "handle-quit", G_CALLBACK(::handleQuit), self);
   g_signal_connect(debug, "handle-enable", G_CALLBACK(::handleEnable), self);
   g_signal_connect(debug, "handle-disable", G_CALLBACK(::handleDisable), self);
-}
-
-void AutobrightServicePrivate::handleQuit(AutobrightService *self) {
-  quit(self, EXIT_SUCCESS);
-}
-
-void AutobrightServicePrivate::handleEnable(AutobrightService *self) {
-  self->enable++;
-}
-
-void AutobrightServicePrivate::handleDisable(AutobrightService *self) {
-  if (self->enable > 0)
-    self->enable--;
 }
 
 void AutobrightServicePrivate::onBusAcquired(
@@ -148,14 +146,37 @@ void AutobrightServicePrivate::quit(AutobrightService *self, int status) {
     g_main_loop_quit(self->mainLoop);
 }
 
+void AutobrightServicePrivate::enableDebug(AutobrightService *self) {
+  self->enable++;
+  LOGGER(logger) << "Debug enabled, count: " << self->enable << endl;
+
+  /* initial reading */
+  if (self->enable == 1) {
+    updateDebug(self);
+  }
+}
+
+void AutobrightServicePrivate::disableDebug(AutobrightService *self) {
+  if (self->enable < 1)
+    return;
+
+  self->enable--;
+  LOGGER(logger) << "Debug disabled, count: " << self->enable << endl;
+
+  /* reset to default */
+  if (self->enable == 0) {
+    DebugInfo info;
+    copyDebugInfo(&info, self->debug.get());
+  }
+}
+
 void AutobrightServicePrivate::updateDebug(AutobrightService *self) {
   if (self->enable < 1)
     return;
-  LOGGER(logger) << "I will debug, oh, yeah, lalalala" << endl;
-  // TODO: update debug info on autobright
-  // TODO: copy debug info into skeleton
-//  AutobrightDebug *debug = self->debug.get();
-//  GDBusInterfaceSkeleton *iface = G_DBUS_INTERFACE_SKELETON(debug);
+
+  DebugInfo info;
+  self->autobright->updateDebugInfo(&info);
+  copyDebugInfo(&info, self->debug.get());
 }
 
 AutobrightService::AutobrightService(Autobright *autobright) :
