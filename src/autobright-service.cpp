@@ -9,6 +9,10 @@ using namespace std;
 static const Logger logger("[AutobrightService]", Logger::DEBUG);
 
 struct AutobrightServicePrivate {
+    static void connectMethods(AutobrightService *self);
+    static void handleQuit(AutobrightService *self);
+    static void handleEnable(AutobrightService *self);
+    static void handleDisable(AutobrightService *self);
     static void onBusAcquired(
         AutobrightService *self,
         GDBusConnection *connection);
@@ -19,6 +23,36 @@ struct AutobrightServicePrivate {
     static void quit(AutobrightService *self, int status);
     static void updateDebug(AutobrightService *self);
 };
+
+static gboolean handleQuit(
+    AutobrightDebug *object,
+    GDBusMethodInvocation *invocation,
+    gpointer user_data) {
+  AutobrightService *self = (AutobrightService*) user_data;
+  AutobrightServicePrivate::handleQuit(self);
+  autobright_debug_complete_quit(object, invocation);
+  return TRUE;
+}
+
+static gboolean handleEnable(
+    AutobrightDebug *object,
+    GDBusMethodInvocation *invocation,
+    gpointer user_data) {
+  AutobrightService *self = (AutobrightService*) user_data;
+  AutobrightServicePrivate::handleEnable(self);
+  autobright_debug_complete_enable(object, invocation);
+  return TRUE;
+}
+
+static gboolean handleDisable(
+    AutobrightDebug *object,
+    GDBusMethodInvocation *invocation,
+    gpointer user_data) {
+  AutobrightService *self = (AutobrightService*) user_data;
+  AutobrightServicePrivate::handleDisable(self);
+  autobright_debug_complete_disable(object, invocation);
+  return TRUE;
+}
 
 static void onBusAcquired(
     GDBusConnection *connection,
@@ -46,6 +80,26 @@ static void onNameLost(
   LOGGER(logger) << "[" << name << "] name lost" << endl;
   AutobrightService *self = (AutobrightService*) user_data;
   AutobrightServicePrivate::onNameLost(self, connection);
+}
+
+void AutobrightServicePrivate::connectMethods(AutobrightService *self) {
+  AutobrightDebug *debug = self->debug.get();
+  g_signal_connect(debug, "handle-quit", G_CALLBACK(::handleQuit), self);
+  g_signal_connect(debug, "handle-enable", G_CALLBACK(::handleEnable), self);
+  g_signal_connect(debug, "handle-disable", G_CALLBACK(::handleDisable), self);
+}
+
+void AutobrightServicePrivate::handleQuit(AutobrightService *self) {
+  quit(self, EXIT_SUCCESS);
+}
+
+void AutobrightServicePrivate::handleEnable(AutobrightService *self) {
+  self->enable++;
+}
+
+void AutobrightServicePrivate::handleDisable(AutobrightService *self) {
+  if (self->enable > 0)
+    self->enable--;
 }
 
 void AutobrightServicePrivate::onBusAcquired(
@@ -95,7 +149,9 @@ void AutobrightServicePrivate::quit(AutobrightService *self, int status) {
 }
 
 void AutobrightServicePrivate::updateDebug(AutobrightService *self) {
-  // TODO: if enabled
+  if (self->enable < 1)
+    return;
+  LOGGER(logger) << "I will debug, oh, yeah, lalalala" << endl;
   // TODO: update debug info on autobright
   // TODO: copy debug info into skeleton
 //  AutobrightDebug *debug = self->debug.get();
@@ -113,6 +169,8 @@ AutobrightService::AutobrightService(Autobright *autobright) :
   bchid = autobright->brightnessChanged << [=] {
     AutobrightServicePrivate::updateDebug(this);
   };
+
+  AutobrightServicePrivate::connectMethods(this);
 
   nameId = g_bus_own_name(
       G_BUS_TYPE_SESSION,

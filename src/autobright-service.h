@@ -18,6 +18,7 @@ class AutobrightService {
     void *bchid = nullptr;
     int nameId = 0;
     int status = 0;
+    int enable = 0;
 
   public:
     AutobrightService(Autobright *autobright);
