@@ -15,9 +15,7 @@ struct AutobrightServicePrivate {
         AutobrightService *self,
         GDBusConnection *connection);
     static void onNameAquired(AutobrightService *self);
-    static void onNameLost(
-        AutobrightService *self,
-        GDBusConnection *connection);
+    static void onNameLost(AutobrightService *self);
     static void quit(AutobrightService *self, int status);
     static void enableDebug(AutobrightService *self);
     static void disableDebug(AutobrightService *self);
@@ -79,7 +77,7 @@ static void onNameLost(
     gpointer user_data) {
   LOGGER(logger) << "[" << name << "] name lost" << endl;
   AutobrightService *self = (AutobrightService*) user_data;
-  AutobrightServicePrivate::onNameLost(self, connection);
+  AutobrightServicePrivate::onNameLost(self);
 }
 
 static void copyDebugInfo(DebugInfo *info, AutobrightDebug *debug) {
@@ -127,10 +125,7 @@ void AutobrightServicePrivate::onNameAquired(AutobrightService *self) {
   });
 }
 
-void AutobrightServicePrivate::onNameLost(
-    AutobrightService *self,
-    GDBusConnection *connection) {
-
+void AutobrightServicePrivate::onNameLost(AutobrightService *self) {
   AutobrightDebug *debug = self->debug.get();
   GDBusInterfaceSkeleton *iface = G_DBUS_INTERFACE_SKELETON(debug);
   g_dbus_interface_skeleton_unexport(iface);
