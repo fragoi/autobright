@@ -20,10 +20,11 @@ class Adapter {
 
     Adapter(IBrightnessProxy *proxy);
     ~Adapter();
+
     int getOffset() const;
-    void setOffset(int value);
+    void setOffset(int);
     int getValue() const;
-    void setValue(int value);
+    void setValue(int);
 };
 
 #endif /* ADAPTER_H_ */

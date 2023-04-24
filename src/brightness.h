@@ -10,7 +10,7 @@ struct IBrightnessProxy {
 
     virtual ~IBrightnessProxy() = default;
     virtual promise::Promise<void> connect() = 0;
-    virtual promise::Promise<void> setBrightness(int value) = 0;
+    virtual promise::Promise<void> setBrightness(int) = 0;
     virtual int getBrightness() const = 0;
 };
 
@@ -22,7 +22,7 @@ class BrightnessProxy: public IBrightnessProxy {
 
   public:
     promise::Promise<void> connect();
-    promise::Promise<void> setBrightness(int value);
+    promise::Promise<void> setBrightness(int);
     int getBrightness() const;
 };
 
