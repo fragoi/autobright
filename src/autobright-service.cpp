@@ -212,5 +212,9 @@ int AutobrightService::run() {
 
   mainLoop = g_main_loop_new(NULL, FALSE);
   g_main_loop_run(mainLoop);
+
+  g_main_loop_unref(mainLoop);
+  mainLoop = nullptr;
+
   return status;
 }
