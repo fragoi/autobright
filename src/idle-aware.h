@@ -3,6 +3,7 @@
 
 #include "brightness.h"
 #include "idle-monitor.h"
+#include "debug-info.h"
 
 class IdleAware: public IBrightnessProxy {
     friend class IdleAwarePrivate;
@@ -26,9 +27,12 @@ class IdleAware: public IBrightnessProxy {
   public:
     IdleAware();
     ~IdleAware();
+
     promise::Promise<void> connect();
-    promise::Promise<void> setBrightness(int value);
+    promise::Promise<void> setBrightness(int);
     int getBrightness() const;
+
+    void updateDebugInfo(DebugInfo*) const;
 };
 
 #endif /* IDLE_AWARE_H_ */

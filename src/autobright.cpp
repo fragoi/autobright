@@ -21,7 +21,6 @@ void AutobrightPrivate::onLightLevelChanged(Autobright *self) {
   int normalized = normalizeLux(lightLevel);
   self->normalized = normalized;
   int filtered = self->filter.filter(normalized);
-  self->filtered = filtered;
   self->adapter.setValue(filtered);
 
   LOGGER_DEBUG(logger) << "Light Level Changed: " << lightLevel
@@ -55,13 +54,12 @@ Promise<void> Autobright::connect() {
   };
 }
 
-void Autobright::updateDebugInfo(DebugInfo *info) {
+void Autobright::updateDebugInfo(DebugInfo *info) const {
   info->lightLevel = sensor.getLightLevel();
   info->normalized = normalized;
-  //info->pressure = filter.
-  info->filtered = filtered;
   info->value = adapter.getValue();
   info->offset = adapter.getOffset();
   info->brightness = bright.getBrightness();
-  //info->flags = bright.
+  filter.updateDebugInfo(info);
+  bright.updateDebugInfo(info);
 }

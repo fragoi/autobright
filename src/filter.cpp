@@ -23,3 +23,8 @@ int PressureFilter::filter(int v) {
   }
   return value;
 }
+
+void PressureFilter::updateDebugInfo(DebugInfo *info) const {
+  info->pressure = pressure;
+  info->filtered = value;
+}

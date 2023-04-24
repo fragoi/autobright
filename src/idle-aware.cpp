@@ -157,3 +157,7 @@ Promise<void> IdleAware::setBrightness(int value) {
 int IdleAware::getBrightness() const {
   return proxy.getBrightness();
 }
+
+void IdleAware::updateDebugInfo(DebugInfo *info) const {
+  info->flags = flags;
+}

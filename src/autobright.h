@@ -24,7 +24,6 @@ class Autobright {
 
     void *llchid = nullptr;
     int normalized = 0;
-    int filtered = 0;
 
   public:
     signals::Signal<void()> &lightLevelChanged;
@@ -34,7 +33,8 @@ class Autobright {
     ~Autobright();
 
     promise::Promise<void> connect();
-    void updateDebugInfo(DebugInfo*);
+
+    void updateDebugInfo(DebugInfo*) const;
 };
 
 #endif /* AUTOBRIGHT_H_ */
