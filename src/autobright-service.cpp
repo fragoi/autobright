@@ -128,7 +128,9 @@ void AutobrightServicePrivate::onNameAquired(AutobrightService *self) {
 void AutobrightServicePrivate::onNameLost(AutobrightService *self) {
   AutobrightDebug *debug = self->debug.get();
   GDBusInterfaceSkeleton *iface = G_DBUS_INTERFACE_SKELETON(debug);
-  g_dbus_interface_skeleton_unexport(iface);
+  if (g_dbus_interface_skeleton_get_connection(iface)) {
+    g_dbus_interface_skeleton_unexport(iface);
+  }
 
   quit(self, EXIT_FAILURE);
 }
