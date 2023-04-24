@@ -113,8 +113,7 @@ void AutobrightServicePrivate::onBusAcquired(
       error.get());
 
   if (error) {
-    /* for now, later maybe throw and terminate */
-    LOGGER_ERROR(logger) << error.what() << endl;
+    LOGGER_ERROR(logger) << "Error exporting debug: " << error.what() << endl;
   }
 }
 
