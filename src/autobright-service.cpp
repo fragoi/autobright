@@ -118,10 +118,15 @@ void AutobrightServicePrivate::onBusAcquired(
 }
 
 void AutobrightServicePrivate::onNameAquired(AutobrightService *self) {
-  self->autobright->connect().grab([=](const exception_ptr &ex) {
-    LOGGER_ERROR(logger) << "Error connecting: " << ex << endl;
-    quit(self, EXIT_FAILURE);
-  });
+  self->autobright->connect().then(
+      [] {
+        LOGGER(logger) << "Connected" << endl;
+      },
+      [=](exception_ptr ex) {
+        LOGGER_ERROR(logger) << "Error connecting: " << ex << endl;
+        quit(self, EXIT_FAILURE);
+      }
+  );
 }
 
 void AutobrightServicePrivate::onNameLost(AutobrightService *self) {
