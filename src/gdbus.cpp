@@ -1,3 +1,5 @@
+#include <string>
+
 #include "gdbus.h"
 #include "closure.h"
 #include "gexception.h"
@@ -113,6 +115,11 @@ namespace gdbus {
   template<>
   unsigned long gVariantGet<unsigned long>(GVariant *value) {
     return g_variant_get_uint64(value);
+  }
+
+  template<>
+  string gVariantGet<string>(GVariant *value) {
+    return g_variant_get_string(value, NULL);
   }
 
   template<>

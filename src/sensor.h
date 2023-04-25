@@ -8,14 +8,24 @@
 class SensorProxy {
     friend class SensorProxyPrivate;
 
+  public:
+    enum Unit {
+      UNKNOWN,
+      VENDOR,
+      LUX
+    };
+
+  private:
     gdbus::PGDBusProxy proxy;
     double lightLevel = 0;
+    Unit unit = UNKNOWN;
 
   public:
     signals::Signal<void()> lightLevelChanged;
 
     promise::Promise<void> connect();
     double getLightLevel() const;
+    Unit getUnit() const;
 };
 
 #endif /* SENSOR_H_ */
