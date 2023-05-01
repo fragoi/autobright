@@ -133,6 +133,6 @@ SensorProxy::Unit SensorProxy::getUnit() const {
   return unit;
 }
 
-inline bool SensorProxy::hasUnit() const {
+bool SensorProxy::hasUnit() const {
   return unit != UNKNOWN;
 }
