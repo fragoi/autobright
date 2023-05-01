@@ -6,14 +6,27 @@
 using namespace std;
 using namespace gdbus;
 using namespace promise;
-
-static const Getter<string> getLightLevelUnit { "LightLevelUnit" };
+using namespace signals;
 
 struct SensorProxyPrivate {
     static void setProxy(SensorProxy *sensor, PGDBusProxy proxy);
     static void setLightLevel(SensorProxy *sensor, double value);
     static void setUnit(SensorProxy *self, const string &value);
     static Promise<void> ensureUnit(SensorProxy *self);
+};
+
+struct ResolveOnUnit {
+    SensorProxy *sensor;
+    Signal<void()> *signal;
+    Result<void> result;
+
+    void operator()() {
+      if (!sensor->hasUnit())
+        return;
+
+      signal->remove(*this);
+      result.resolve();
+    }
 };
 
 inline static void updateLightLevel(SensorProxy *sensor, GDBusProxy *proxy) {
@@ -24,7 +37,7 @@ inline static void updateLightLevel(SensorProxy *sensor, GDBusProxy *proxy) {
   }
 }
 
-inline static void updateUnit(SensorProxy *self, GDBusProxy *proxy) {
+static void updateUnit(SensorProxy *self, GDBusProxy *proxy) {
   PUGVariant unit(g_dbus_proxy_get_cached_property(proxy, "LightLevelUnit"));
   if (unit) {
     string value = pgVariantGet<string>(unit);
@@ -38,6 +51,9 @@ static void onPropertiesChanged(
     const gchar *const*invalidated_properties,
     gpointer user_data) {
   SensorProxy *sensor = (SensorProxy*) user_data;
+  if (!sensor->hasUnit()) {
+    updateUnit(sensor, proxy);
+  }
   updateLightLevel(sensor, proxy);
 }
 
@@ -58,8 +74,8 @@ void SensorProxyPrivate::setProxy(SensorProxy *sensor, PGDBusProxy proxy) {
         G_CALLBACK(onPropertiesChanged),
         sensor);
 
-    updateLightLevel(sensor, proxy.get());
     updateUnit(sensor, proxy.get());
+    updateLightLevel(sensor, proxy.get());
   }
 }
 
@@ -82,12 +98,15 @@ void SensorProxyPrivate::setUnit(SensorProxy *self, const string &value) {
 }
 
 Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
-  if (self->unit != SensorProxy::UNKNOWN)
+  if (self->hasUnit())
     return resolved();
 
-  return getLightLevelUnit(self->proxy) << [=](const string &value) {
-    setUnit(self, value);
+  Result<void> result;
+  Promise<void> promise = result;
+  self->lightLevelChanged << ResolveOnUnit {
+      self, &self->lightLevelChanged, result
   };
+  return promise;
 }
 
 Promise<void> SensorProxy::connect() {
@@ -112,4 +131,8 @@ double SensorProxy::getLightLevel() const {
 
 SensorProxy::Unit SensorProxy::getUnit() const {
   return unit;
+}
+
+inline bool SensorProxy::hasUnit() const {
+  return unit != UNKNOWN;
 }

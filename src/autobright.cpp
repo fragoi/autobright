@@ -30,11 +30,11 @@ inline static int normalizeLightLevel(double lightLevel, Unit unit) {
 }
 
 void AutobrightPrivate::onLightLevelChanged(Autobright *self) {
-  Unit unit = self->sensor.getUnit();
-  if (unit == Unit::UNKNOWN)
+  if (!self->sensor.hasUnit())
     return;
 
   double lightLevel = self->sensor.getLightLevel();
+  Unit unit = self->sensor.getUnit();
   int normalized = normalizeLightLevel(lightLevel, unit);
   self->normalized = normalized;
   int filtered = self->filter.filter(normalized);

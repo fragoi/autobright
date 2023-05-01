@@ -26,6 +26,7 @@ class SensorProxy {
     promise::Promise<void> connect();
     double getLightLevel() const;
     Unit getUnit() const;
+    bool hasUnit() const;
 };
 
 #endif /* SENSOR_H_ */
