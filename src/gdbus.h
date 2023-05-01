@@ -53,6 +53,13 @@ namespace gdbus {
   }
 
   template<typename T>
+  T pgVariantRetUnpack(const PUGVariant &value) {
+    PUGVariant child(g_variant_get_child_value(value.get(), 0));
+    PUGVariant variant(g_variant_get_variant(child.get()));
+    return gVariantGet<T>(variant.get());
+  }
+
+  template<typename T>
   struct Method;
 
   template<typename Ret, typename ...Args>
@@ -95,7 +102,7 @@ namespace gdbus {
             flags,
             timeout,
             cancellable);
-        return promise.then(pgVariantRet<T>, rethrow<T>);
+        return promise.then(pgVariantRetUnpack<T>, rethrow<T>);
       }
   };
 
