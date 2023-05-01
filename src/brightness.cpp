@@ -4,16 +4,26 @@
 using namespace std;
 using namespace gdbus;
 using namespace promise;
+using namespace signals;
 
 static const Logger logger("[BrightnessProxy]", Logger::DEBUG);
 
-static const Getter<int> brightnessGetter { "Brightness" };
 static const Setter<int> brightnessSetter { "Brightness", "i" };
 
 struct BrightnessProxyPrivate {
     static void setProxy(BrightnessProxy *self, PGDBusProxy proxy);
     static void setBrightness(BrightnessProxy *self, int value);
     static Promise<void> ensureBrightness(BrightnessProxy *self);
+};
+
+struct ResolveOnEmit {
+    Signal<void()> *signal;
+    Result<void> result;
+
+    void operator()() {
+      signal->remove(*this);
+      result.resolve();
+    }
 };
 
 inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {
@@ -68,10 +78,14 @@ Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
   if (self->brightness >= 0)
     return resolved();
 
-  LOGGER_DEBUG(logger) << "Brightness missing, using getter" << endl;
-  return brightnessGetter(self->proxy) << [=](int value) {
-    setBrightness(self, value);
+  LOGGER_DEBUG(logger) << "Brightness missing, waiting for it" << endl;
+
+  Result<void> result;
+  Promise<void> promise = result;
+  self->brightnessChanged << ResolveOnEmit {
+      &self->brightnessChanged, result
   };
+  return promise;
 }
 
 Promise<void> BrightnessProxy::connect() {
