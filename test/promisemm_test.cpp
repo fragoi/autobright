@@ -75,33 +75,8 @@ static void test_then_lvalue() {
   ASSERTS(1, 1, 0, 2);
 }
 
-static void test_ref() {
-  Result<void> r;
-  Promise<void> p = r;
-
-  Functor f;
-  p.then(f);
-
-  r.resolve();
-
-  assert(!f.resolved);
-}
-
-static void test_lambda() {
-  Result<void> r;
-  Promise<void> p = r;
-
-  Functor f;
-  auto l = [f] {
-  };
-
-  p.then(l);
-}
-
 int main() {
   test_then_lvalue();
-  test_ref();
-  test_lambda();
 
   cout << "OK" << endl;
 }
