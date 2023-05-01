@@ -53,6 +53,7 @@ tests = {
   'logger_test': 'test/logger_test.cpp',
   'promise_test': 'test/promise_test.cpp',
   'promisemm_test': 'test/promisemm_test.cpp',
+  'retry_test': 'test/retry_test.cpp',
   'sensor_test': 'test/sensor_test.cpp',
   'signals_test': 'test/signals_test.cpp',
   'signals2_test': 'test/signals2_test.cpp',
