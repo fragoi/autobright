@@ -9,8 +9,8 @@ using namespace promise;
 using namespace signals;
 
 struct SensorProxyPrivate {
-    static void setProxy(SensorProxy *sensor, PGDBusProxy proxy);
-    static void setLightLevel(SensorProxy *sensor, double value);
+    static void setProxy(SensorProxy *self, PGDBusProxy proxy);
+    static void setLightLevel(SensorProxy *self, double value);
     static void setUnit(SensorProxy *self, const string &value);
     static Promise<void> ensureUnit(SensorProxy *self);
 };
@@ -29,11 +29,11 @@ struct ResolveOnUnit {
     }
 };
 
-inline static void updateLightLevel(SensorProxy *sensor, GDBusProxy *proxy) {
+inline static void updateLightLevel(SensorProxy *self, GDBusProxy *proxy) {
   PUGVariant lightLevel(g_dbus_proxy_get_cached_property(proxy, "LightLevel"));
   if (lightLevel) {
     double value = g_variant_get_double(lightLevel.get());
-    SensorProxyPrivate::setLightLevel(sensor, value);
+    SensorProxyPrivate::setLightLevel(self, value);
   }
 }
 
@@ -50,41 +50,41 @@ static void onPropertiesChanged(
     GVariant *changed_properties,
     const gchar *const*invalidated_properties,
     gpointer user_data) {
-  SensorProxy *sensor = (SensorProxy*) user_data;
-  if (!sensor->hasUnit()) {
-    updateUnit(sensor, proxy);
+  SensorProxy *self = (SensorProxy*) user_data;
+  if (!self->hasUnit()) {
+    updateUnit(self, proxy);
   }
-  updateLightLevel(sensor, proxy);
+  updateLightLevel(self, proxy);
 }
 
-void SensorProxyPrivate::setProxy(SensorProxy *sensor, PGDBusProxy proxy) {
-  if (sensor->proxy == proxy)
+void SensorProxyPrivate::setProxy(SensorProxy *self, PGDBusProxy proxy) {
+  if (self->proxy == proxy)
     return;
 
-  if (sensor->proxy) {
-    g_signal_handlers_disconnect_by_data(sensor->proxy.get(), sensor);
+  if (self->proxy) {
+    g_signal_handlers_disconnect_by_data(self->proxy.get(), self);
   }
 
-  sensor->proxy = proxy;
+  self->proxy = proxy;
 
   if (proxy) {
     g_signal_connect(
         proxy.get(),
         "g-properties-changed",
         G_CALLBACK(onPropertiesChanged),
-        sensor);
+        self);
 
-    updateUnit(sensor, proxy.get());
-    updateLightLevel(sensor, proxy.get());
+    updateUnit(self, proxy.get());
+    updateLightLevel(self, proxy.get());
   }
 }
 
-void SensorProxyPrivate::setLightLevel(SensorProxy *sensor, double value) {
-  if (sensor->lightLevel == value)
+void SensorProxyPrivate::setLightLevel(SensorProxy *self, double value) {
+  if (self->lightLevel == value)
     return;
 
-  sensor->lightLevel = value;
-  sensor->lightLevelChanged();
+  self->lightLevel = value;
+  self->lightLevelChanged();
 }
 
 void SensorProxyPrivate::setUnit(SensorProxy *self, const string &value) {
