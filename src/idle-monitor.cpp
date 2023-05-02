@@ -112,7 +112,7 @@ WatchBase* IdleMonitorProxyPrivate::findWatch(
     void *id) {
   for (const WatchFired::P &handler : self->watchFired.handlers()) {
     if (handler->pdata() == id) {
-      return (WatchBase*) handler.get();
+      return (WatchBase*) handler->pdata();
     }
   }
   return nullptr;
@@ -243,7 +243,7 @@ Promise<void> IdleMonitorProxy::refreshAll() {
   LogException eh = PROMISE_LOG_EX;
   for (const WatchFired::P &handler : watchFired.handlers()) {
     ids.push_back(handler->pdata());
-    WatchBase *watch = (WatchBase*) handler.get();
+    WatchBase *watch = (WatchBase*) handler->pdata();
     _removeWatch(proxy, watch->key).then(rl, eh);
   }
   return promise << [=] {
