@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "moduleDetection": "force",
+    "target": "ES2019",
+    "checkJs": true
+  }
+}
