@@ -8,7 +8,7 @@ using namespace std;
 using namespace promise;
 using Unit = SensorProxy::Unit;
 
-static const Logger logger("[Autobright]", Logger::INFO);
+static const Logger logger("[Autobright]", Logger::DEFAULT);
 
 struct AutobrightPrivate {
     static void onLightLevelChanged(Autobright *self);

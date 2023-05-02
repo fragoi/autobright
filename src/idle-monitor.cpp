@@ -66,9 +66,6 @@ static void onOwnerChanged(
   if (!owner)
     return;
 
-  LOGGER_DEBUG(logger) << "Just to see the function name: "
-      << __PRETTY_FUNCTION__ << endl;
-
   IdleMonitorProxy *self = (IdleMonitorProxy*) user_data;
   self->refreshAll().grab(PROMISE_LOG_EX);
 }
@@ -136,7 +133,7 @@ Promise<void> IdleMonitorProxyPrivate::refreshKey(
 
   return p << [=](int newKey) {
     if (compareAndSetKey(self, id, oldKey, newKey)) {
-      LOGGER(logger) << "Refreshed "
+      LOGGER_INFO(logger) << "Refreshed "
           << (watch->interval ? "idle" : "user active")
           << " watch: " << oldKey << " -> " << newKey
           << endl;

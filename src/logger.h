@@ -18,6 +18,7 @@ class Logger {
 
     enum Level {
       DEBUG,
+      DEFAULT,
       INFO,
       WARN,
       ERROR
@@ -32,7 +33,7 @@ class Logger {
     }
 
   public:
-    Logger(const char *prefix = nullptr, Level level = INFO) :
+    Logger(const char *prefix = nullptr, Level level = DEFAULT) :
         prefix(prefix), level(level) {
     }
 
@@ -68,7 +69,7 @@ class Logger {
     }
 
     explicit operator bool() const {
-      return level <= INFO;
+      return level <= DEFAULT;
     }
 
     bool isDebug() const {
