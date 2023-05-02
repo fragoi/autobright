@@ -234,21 +234,16 @@ class LogWindow {
    */
   _autoScroll(adjustment, scrollable) {
     let enabled = true;
-    let _upper = null;
     adjustment.connect('notify::value', (adj) => {
       enabled = adj.get_value() >= adj.get_upper() - adj.get_page_size();
     });
     adjustment.connect('notify::upper', (adj) => {
-      const upper = adj.get_upper();
-      if (_upper !== upper) {
-        _upper = upper;
-        if (enabled) {
-          const value = upper - adj.get_page_size();
-          if (adj.get_value() !== value) {
-            adj.set_value(value);
-          } else if (value > 0 && scrollable) {
-            scrollable.queue_draw();
-          }
+      if (enabled) {
+        const value = adj.get_upper() - adj.get_page_size();
+        if (adj.get_value() !== value) {
+          adj.set_value(value);
+        } else if (value > 0 && scrollable) {
+          scrollable.queue_draw();
         }
       }
     });
