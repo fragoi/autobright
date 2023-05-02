@@ -69,7 +69,7 @@ class IdleMonitorProxy {
         if (!key)
           throw std::runtime_error("Service returned invalid key");
 
-        LOGGER(logger) << "Added idle watch: " << key << std::endl;
+        LOGGER_DEBUG(logger) << "Added idle watch: " << key << std::endl;
         return watchFired << Watch(&watchFired, key, interval, handler);
       };
     }
@@ -81,7 +81,7 @@ class IdleMonitorProxy {
         if (!key)
           throw std::runtime_error("Service returned invalid key");
 
-        LOGGER(logger) << "Added user active watch: " << key << std::endl;
+        LOGGER_DEBUG(logger) << "Added user active watch: " << key << std::endl;
         return watchFired << Watch(&watchFired, key, 0, handler);
       };
     }

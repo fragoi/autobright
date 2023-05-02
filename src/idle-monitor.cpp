@@ -212,9 +212,9 @@ Promise<void> IdleMonitorProxy::removeWatch(void *id) {
   watchFired.remove(id);
 
   Promise<void> p = _removeWatch(proxy, key);
-  if (logger) {
+  if (logger.isDebug()) {
     p.then([=] {
-      logger << "Removed watch:" << key << endl;
+      logger.debug() << "Removed watch:" << key << endl;
     });
   }
   return p;
