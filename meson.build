@@ -50,6 +50,7 @@ tests = {
   'gexception_test': 'test/gexception_test.cpp',
   'gobject_ptr_test': 'test/gobject_ptr_test.cpp',
   'idle_aware_test': 'test/idle_aware_test.cpp',
+  'idle_monitor_test': 'test/idle_monitor_test.cpp',
   'logger_test': 'test/logger_test.cpp',
   'promise_test': 'test/promise_test.cpp',
   'promisemm_test': 'test/promisemm_test.cpp',
