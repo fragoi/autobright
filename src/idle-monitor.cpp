@@ -236,11 +236,11 @@ Promise<void> IdleMonitorProxy::removeAll() {
 }
 
 Promise<void> IdleMonitorProxy::refreshAll() {
+  list<void*> ids;
   Result<void> result;
   Promise<void> promise = result;
   ResolveLatch rl = result;
   LogException eh = PROMISE_LOG_EX;
-  list<void*> ids;
   for (const WatchFired::P &handler : watchFired.handlers()) {
     ids.push_back(handler->pdata());
     WatchBase *watch = (WatchBase*) handler.get();
