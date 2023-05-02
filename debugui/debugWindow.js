@@ -192,7 +192,7 @@ class LogWindow {
   enable() {
     const textBuffer = new Gtk.TextBuffer();
     this._logBuffer = new LogBuffer(textBuffer);
-    this._textView = newLogWindow(textBuffer);
+    this._textView = this._newTextView(textBuffer);
     this._container.add(this._textView);
     this._textView.show_all();
   }
@@ -209,50 +209,50 @@ class LogWindow {
   log(msg) {
     this._logBuffer.append(msg);
   }
-}
 
-/**
- * @param {any} textBuffer
- */
-function newLogWindow(textBuffer) {
-  const textView = new Gtk.TextView({
-    buffer: textBuffer,
-    editable: false,
-    monospace: true,
-  });
-  const textWindow = new Gtk.ScrolledWindow({
-    child: textView,
-    vexpand: true,
-    min_content_height: 120,
-  });
-  autoScroll(textWindow.get_vadjustment(), textView);
-  return textWindow;
-}
+  /**
+   * @param {any} textBuffer
+   */
+  _newTextView(textBuffer) {
+    const textView = new Gtk.TextView({
+      buffer: textBuffer,
+      editable: false,
+      monospace: true,
+    });
+    const textWindow = new Gtk.ScrolledWindow({
+      child: textView,
+      vexpand: true,
+      min_content_height: 120,
+    });
+    this._autoScroll(textWindow.get_vadjustment(), textView);
+    return textWindow;
+  }
 
-/**
- * @param {any} adjustment
- * @param {any} scrollable
- */
-function autoScroll(adjustment, scrollable) {
-  let enabled = true;
-  let _upper = null;
-  adjustment.connect('notify::value', (adj) => {
-    enabled = adj.get_value() >= adj.get_upper() - adj.get_page_size();
-  });
-  adjustment.connect('notify::upper', (adj) => {
-    const upper = adj.get_upper();
-    if (_upper !== upper) {
-      _upper = upper;
-      if (enabled) {
-        const value = upper - adj.get_page_size();
-        if (adj.get_value() !== value) {
-          adj.set_value(value);
-        } else if (value > 0 && scrollable) {
-          scrollable.queue_draw();
+  /**
+   * @param {any} adjustment
+   * @param {any} scrollable
+   */
+  _autoScroll(adjustment, scrollable) {
+    let enabled = true;
+    let _upper = null;
+    adjustment.connect('notify::value', (adj) => {
+      enabled = adj.get_value() >= adj.get_upper() - adj.get_page_size();
+    });
+    adjustment.connect('notify::upper', (adj) => {
+      const upper = adj.get_upper();
+      if (_upper !== upper) {
+        _upper = upper;
+        if (enabled) {
+          const value = upper - adj.get_page_size();
+          if (adj.get_value() !== value) {
+            adj.set_value(value);
+          } else if (value > 0 && scrollable) {
+            scrollable.queue_draw();
+          }
         }
       }
-    }
-  });
+    });
+  }
 }
 
 class LogBuffer {
