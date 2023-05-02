@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=@exec@
+Icon=display-brightness-symbolic
+
+Name=Autobright
+
+Comment=Autobright Debug Window

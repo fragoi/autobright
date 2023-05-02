@@ -3,6 +3,7 @@ project('autobright', 'cpp',
 
 prefix = get_option('prefix')
 datadir = prefix / get_option('datadir')
+prvdir = prefix / 'lib' / meson.project_name()
 
 headers = [
   'src/adapter.h',
@@ -96,6 +97,11 @@ foreach name, source : manual_test
     link_args: ['-lpthread'])
 endforeach
 
+install_subdir('debugui',
+  install_dir: prvdir
+)
+
+subdir('data' / 'desktop')
 subdir('data' / 'schemas')
 subdir('data' / 'systemd')
 
