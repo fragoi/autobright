@@ -166,9 +166,7 @@ var DebugWindow = class {
    * @param {string} msg
    */
   log(msg) {
-    if (this._windowLogSwitch.get_active()) {
-      this._logWindow.log(msg);
-    }
+    this._logWindow.log(msg);
   }
 
   _toggleWindowLog() {
@@ -207,7 +205,7 @@ class LogWindow {
    * @param {string} msg
    */
   log(msg) {
-    this._logBuffer.append(msg);
+    this._logBuffer && this._logBuffer.append(msg);
   }
 
   /**
