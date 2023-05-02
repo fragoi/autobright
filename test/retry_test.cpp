@@ -11,6 +11,10 @@ using namespace std;
 using namespace promise;
 using namespace retry;
 
+static const int BACKOFF = 100;
+static const int FACTOR = 1.5;
+static const int RETRIES = 2;
+
 static Promise<void> test_retry_void(int &times) {
   return retry::retry([&] {
     cout << "Retry called: " << times << endl;
@@ -20,7 +24,7 @@ static Promise<void> test_retry_void(int &times) {
     } else {
       return resolved();
     }
-  });
+  }, BACKOFF, FACTOR, RETRIES);
 }
 
 static Promise<int> test_retry_int(int &times) {
@@ -32,7 +36,7 @@ static Promise<int> test_retry_int(int &times) {
     } else {
       return resolved(1);
     }
-  });
+  }, BACKOFF, FACTOR, RETRIES);
 }
 
 static void quitLoop(GMainLoop **loop) {
@@ -64,12 +68,12 @@ static void test_void() {
   int resolved = 0;
   int rejected = 0;
 
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < 4; ++i) {
     times = i;
     runLoop(test_retry_void(times), resolved, rejected);
   }
 
-  assert(resolved == 4);
+  assert(resolved == 3);
   assert(rejected == 1);
 }
 
@@ -78,12 +82,12 @@ static void test_int() {
   int resolved = 0;
   int rejected = 0;
 
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < 4; ++i) {
     times = i;
     runLoop(test_retry_int(times), resolved, rejected);
   }
 
-  assert(resolved == 4);
+  assert(resolved == 3);
   assert(rejected == 1);
 }
 
