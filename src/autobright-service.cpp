@@ -81,7 +81,6 @@ static void onNameLost(
 }
 
 static void copyDebugInfo(DebugInfo *info, AutobrightDebug *debug) {
-  autobright_debug_set_enabled(debug, info->enabled ? TRUE : FALSE);
   autobright_debug_set_unit(debug, info->unit);
   autobright_debug_set_light_level(debug, info->lightLevel);
   autobright_debug_set_normalized(debug, info->normalized);
@@ -155,6 +154,8 @@ void AutobrightServicePrivate::enableDebug(AutobrightService *self) {
 
   /* initial reading */
   if (self->enable == 1) {
+    autobright_debug_set_enabled(self->debug.get(), TRUE);
+
     updateDebug(self);
   }
 }
@@ -168,6 +169,8 @@ void AutobrightServicePrivate::disableDebug(AutobrightService *self) {
 
   /* reset to default, TODO: would be better to invalidate properties */
   if (self->enable == 0) {
+    autobright_debug_set_enabled(self->debug.get(), FALSE);
+
     DebugInfo info;
     copyDebugInfo(&info, self->debug.get());
   }
@@ -178,7 +181,6 @@ void AutobrightServicePrivate::updateDebug(AutobrightService *self) {
     return;
 
   DebugInfo info;
-  info.enabled = true;
   self->autobright->updateDebugInfo(&info);
   copyDebugInfo(&info, self->debug.get());
 }
