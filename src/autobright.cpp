@@ -72,6 +72,7 @@ Promise<void> Autobright::connect() {
 }
 
 void Autobright::updateDebugInfo(DebugInfo *info) const {
+  info->unit = sensor.getUnit();
   info->lightLevel = sensor.getLightLevel();
   info->normalized = normalized;
   info->value = adapter.getValue();

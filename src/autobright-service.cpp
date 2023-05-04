@@ -81,6 +81,8 @@ static void onNameLost(
 }
 
 static void copyDebugInfo(DebugInfo *info, AutobrightDebug *debug) {
+  autobright_debug_set_enabled(debug, info->enabled ? TRUE : FALSE);
+  autobright_debug_set_unit(debug, info->unit);
   autobright_debug_set_light_level(debug, info->lightLevel);
   autobright_debug_set_normalized(debug, info->normalized);
   autobright_debug_set_pressure(debug, info->pressure);
@@ -176,6 +178,7 @@ void AutobrightServicePrivate::updateDebug(AutobrightService *self) {
     return;
 
   DebugInfo info;
+  info.enabled = true;
   self->autobright->updateDebugInfo(&info);
   copyDebugInfo(&info, self->debug.get());
 }

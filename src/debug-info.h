@@ -2,6 +2,8 @@
 #define DEBUG_INFO_H_
 
 struct DebugInfo {
+    bool enabled = false;
+    int unit = 0;
     double lightLevel = 0;
     int normalized = 0;
     double pressure = 0;

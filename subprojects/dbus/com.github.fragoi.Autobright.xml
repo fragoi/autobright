@@ -5,6 +5,8 @@
     <method name="Quit" />
     <method name="Enable" />
     <method name="Disable" />
+    <property name="Enabled" type="b" access="read" />
+    <property name="Unit" type="i" access="read" />
     <property name="LightLevel" type="d" access="read" />
     <property name="Normalized" type="i" access="read" />
     <property name="Pressure" type="d" access="read" />
