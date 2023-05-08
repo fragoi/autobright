@@ -1,7 +1,0 @@
-#!/bin/sh
-
-export DESTDIR=$(mktemp -d)
-
-meson install -C @build_dir@
-
-dpkg-deb -b --root-owner-group $DESTDIR @build_dir@/@deb_name@.deb

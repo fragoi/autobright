@@ -1,0 +1,10 @@
+Source: autobright
+Maintainer: Fra Goi <fragoidev@gmail.com>
+Section: misc
+Priority: optional
+Build-Depends: debhelper (>= 12), meson (>= 0.53)
+
+Package: autobright
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libglib2.0-bin (>= 2.64)
+Description: Automatically adjust screen brightness using light sensor

@@ -104,7 +104,3 @@ install_subdir('debugui',
 subdir('data' / 'desktop')
 subdir('data' / 'schemas')
 subdir('data' / 'systemd')
-
-if get_option('debian')
-  subdir('debian')
-endif
