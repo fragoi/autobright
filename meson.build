@@ -62,7 +62,7 @@ tests = {
   'splist_test': 'test/splist_test.cpp',
 }
 
-manual_test = {
+manual_tests = {
   'brightness_manual_test': 'test/manual/brightness_test.cpp',
   'idle_aware_manual_test': 'test/manual/idle_aware_test.cpp',
   'idle_monitor_manual_test': 'test/manual/idle_monitor_test.cpp',
@@ -90,7 +90,7 @@ foreach name, source : tests
   test(name, test_exe)
 endforeach
 
-foreach name, source : manual_test
+foreach name, source : manual_tests
   executable(name,
     sources: source,
     dependencies: dep,
