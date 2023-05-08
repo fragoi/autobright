@@ -1,6 +1,6 @@
 # Autobright
 
-Automatic brightness from light sensor.
+Automatically adjust screen brightness using light sensor.
 
 Uses D-Bus to gather informations and change brightness:
 * iio-sensor-proxy to read light level (`net.hadess.SensorProxy`)
