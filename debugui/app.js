@@ -1,4 +1,4 @@
-#!/bin/gjs
+#!/usr/bin/gjs
 
 imports.gi.versions.Gtk = '3.0';
 
