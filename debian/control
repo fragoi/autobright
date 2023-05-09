@@ -9,4 +9,4 @@ Package: autobright
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libglib2.0-bin (>= 2.64)
 Description: Automatically adjust screen brightness using light sensor
-  TODO: Need to add an extended description.
+ TODO: Need to add an extended description.
