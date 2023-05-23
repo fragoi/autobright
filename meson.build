@@ -1,5 +1,5 @@
 project('autobright', 'cpp',
-  version: '0.1.0')
+  version: files('version'))
 
 prefix = get_option('prefix')
 datadir = prefix / get_option('datadir')
