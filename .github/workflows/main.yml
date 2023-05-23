@@ -1,0 +1,36 @@
+name: Create release
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create release
+        run: |
+          source .github/bash-functions
+          DEB_PACKAGE=autobright
+          createRelease
+
+  merge-to-dev:
+    needs: [release]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: 'dev'
+      - name: Update dev branch
+        run: |
+          source .github/bash-functions
+          updateDev main dev
