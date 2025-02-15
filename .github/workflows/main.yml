@@ -11,7 +11,6 @@ permissions:
 env:
   GIT_USER_NAME: Fra Bot
   GIT_USER_EMAIL: fragoibot@gmail.com
-  DEBCHANGELOG: y
 
 jobs:
 
@@ -22,7 +21,6 @@ jobs:
       - uses: fragoi/bash-actions@main
       - name: Create release
         run: |
-          source bash-functions
           createRelease
 
   merge-to-dev:
@@ -36,5 +34,4 @@ jobs:
       - uses: fragoi/bash-actions@main
       - name: Update dev branch
         run: |
-          source bash-functions
           updateDev main
