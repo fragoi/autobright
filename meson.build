@@ -77,7 +77,7 @@ dep = declare_dependency(
   link_with: lib,
   dependencies: dependencies)
 
-exe = executable(meson.project_name(),
+executable(meson.project_name(),
   sources: 'src/main.cpp',
   dependencies: dep,
   install: true)
