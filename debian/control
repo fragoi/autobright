@@ -3,7 +3,8 @@ Maintainer: Fra Goi <fragoidev@gmail.com>
 Section: misc
 Priority: optional
 Standards-Version: 4.5.0
-Build-Depends: debhelper (>= 12), meson (>= 0.57) | meson-installer (>= 0.57)
+Build-Depends: debhelper (>= 12), meson (>= 0.57) | meson-installer (>= 0.57),
+  libglib2.0-dev (>= 2.64)
 
 Package: autobright
 Architecture: any
