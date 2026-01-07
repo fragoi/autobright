@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - .github/**
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,18 +23,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: fragoi/bash-actions@main
       - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           createRelease
-
-  merge-to-dev:
-    needs: [release]
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: 'dev'
-      - uses: fragoi/bash-actions@main
-      - name: Update dev branch
-        run: |
-          updateDev main
