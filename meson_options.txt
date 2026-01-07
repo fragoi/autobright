@@ -1,5 +1,0 @@
-option('debian',
-  type: 'boolean',
-  value: true,
-  description: 'Build debian package files'
-)
