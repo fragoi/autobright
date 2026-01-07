@@ -24,17 +24,6 @@ meson setup buiddir
 meson compile -C buiddir
 ```
 
-### Debian
-
-When option `debian` is true, a shell script is generated in the build directory to create a debian package.
-The package is created inside of the build directory where the script was compiled.
-
-```
-<path_to_builddir>/debian/build-deb.sh
-```
-
-The package will be in `<path_to_builddir>`.
-
 ### Systemd
 
 Service should be started as a user service.
