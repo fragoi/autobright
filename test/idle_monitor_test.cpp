@@ -10,9 +10,11 @@ static void doNothing() {
 
 int main() {
   GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+  exception_ptr exception;
+
   IdleMonitorProxy proxy;
 
-  proxy.connect() << [&] {
+  auto promise = proxy.connect() << [&] {
     return proxy.addIdleWatch(1000, &doNothing) << [](void *id) {
       cout << "Added idle watch: " << id << endl;
     };
@@ -33,5 +35,15 @@ int main() {
     g_main_loop_quit(loop);
   };
 
+  promise.grab([&](exception_ptr ex) {
+    exception = ex;
+    g_main_loop_quit(loop);
+  });
+
   g_main_loop_run(loop);
+
+  if (exception)
+    rethrow_exception(exception);
+
+  cout << "OK" << endl;
 }
