@@ -19,6 +19,8 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.exportVersion.outputs.NEW_VERSION }}
     steps:
       - uses: actions/checkout@v3
       - uses: fragoi/bash-actions@main
@@ -27,3 +29,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           createRelease
+      - name: Export version
+        id: exportVersion
+        run: |
+          outputSharedVars NEW_VERSION
+
+  notify-deb:
+    needs: [release]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    if: ${{ needs.release.outputs.new_version }}
+    steps:
+      - uses: fragoi/bash-actions@main
+      - name: Notify debian repository
+        env:
+          NEW_VERSION: ${{ needs.release.outputs.new_version }}
+          GITHUB_TOKEN: ${{ secrets.DEB_TOKEN }}
+        run: |
+          repositoryDispatch fragoi/autobright-deb \
+            -f event_type=new_upstream_version \
+            -f client_payload[upstream_version]="$NEW_VERSION"
