@@ -13,6 +13,7 @@ static const Setter<int> brightnessSetter { "Brightness", "i" };
 struct BrightnessProxyPrivate {
     static void setProxy(BrightnessProxy *self, PGDBusProxy proxy);
     static void setBrightness(BrightnessProxy *self, int value);
+    static Promise<void> ensureProxy(BrightnessProxy *self);
     static Promise<void> ensureBrightness(BrightnessProxy *self);
 };
 
@@ -74,6 +75,21 @@ void BrightnessProxyPrivate::setBrightness(BrightnessProxy *self, int value) {
   self->brightnessChanged();
 }
 
+Promise<void> BrightnessProxyPrivate::ensureProxy(BrightnessProxy *self) {
+  if (self->proxy)
+    return resolved();
+
+  Promise<PGDBusProxy> p = newForBus(
+      G_BUS_TYPE_SESSION,
+      "org.gnome.SettingsDaemon.Power",
+      "/org/gnome/SettingsDaemon/Power",
+      "org.gnome.SettingsDaemon.Power.Screen");
+
+  return p << [=](PGDBusProxy proxy) {
+    BrightnessProxyPrivate::setProxy(self, proxy);
+  };
+}
+
 Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
   if (self->brightness >= 0)
     return resolved();
@@ -89,17 +105,7 @@ Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
 }
 
 Promise<void> BrightnessProxy::connect() {
-  if (proxy)
-    return resolved();
-
-  Promise<PGDBusProxy> p = newForBus(
-      G_BUS_TYPE_SESSION,
-      "org.gnome.SettingsDaemon.Power",
-      "/org/gnome/SettingsDaemon/Power",
-      "org.gnome.SettingsDaemon.Power.Screen");
-
-  return p << [=](PGDBusProxy proxy) {
-    BrightnessProxyPrivate::setProxy(this, proxy);
+  return BrightnessProxyPrivate::ensureProxy(this) << [=]() {
     return BrightnessProxyPrivate::ensureBrightness(this);
   };
 }
