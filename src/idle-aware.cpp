@@ -10,6 +10,7 @@ using namespace promise;
 static const Logger logger("[IdleAware]");
 
 struct IdleAwarePrivate {
+    static Promise<void> addIdleWatch(IdleAware *self);
     static void onBrightnessChanged(IdleAware *self);
     static void onActive(IdleAware *self);
     static void onIdle(IdleAware *self);
@@ -28,6 +29,25 @@ static gboolean gOnActive(gpointer user_data) {
 
 inline static void timeoutOnActive(long interval, IdleAware *self) {
   g_timeout_add(interval, gOnActive, self);
+}
+
+Promise<void> IdleAwarePrivate::addIdleWatch(IdleAware *self) {
+  if (self->idleWatchId)
+    return resolved();
+
+  Promise<void*> p = self->idleMonitor.addIdleWatch(self->idleInterval, [=] {
+    IdleAwarePrivate::onIdle(self);
+  });
+
+  return p << [=](void *id) {
+    /* double check to avoid concurrent calls to this method
+     * to result in duplicated registration of the idle watch */
+    if (self->idleWatchId) {
+      self->idleMonitor.removeWatch(id).grab(PROMISE_LOG_EX);
+    } else {
+      self->idleWatchId = id;
+    }
+  };
 }
 
 void IdleAwarePrivate::onBrightnessChanged(IdleAware *self) {
@@ -134,9 +154,7 @@ Promise<void> IdleAware::connect() {
   return proxy.connect() << [=] {
     return idleMonitor.connect();
   } << [=] {
-    return idleMonitor.addIdleWatch(idleInterval, [=] {
-      IdleAwarePrivate::onIdle(this);
-    });
+    return IdleAwarePrivate::addIdleWatch(this);
   };
 }
 

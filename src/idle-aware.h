@@ -21,6 +21,7 @@ class IdleAware: public IBrightnessProxy {
 
     IdleMonitorProxy idleMonitor;
     long idleInterval = 5000;
+    void *idleWatchId = 0;
     long inactiveTimeout = 500;
     int inactiveCount = 0;
 
