@@ -126,7 +126,7 @@ Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
 }
 
 Promise<void> SensorProxy::connect() {
-  return SensorProxyPrivate::ensureProxy(this) << [=]() {
+  return SensorProxyPrivate::ensureProxy(this) << [=] {
     return SensorProxyPrivate::ensureUnit(this);
   };
 }

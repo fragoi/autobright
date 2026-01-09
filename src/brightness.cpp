@@ -105,7 +105,7 @@ Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
 }
 
 Promise<void> BrightnessProxy::connect() {
-  return BrightnessProxyPrivate::ensureProxy(this) << [=]() {
+  return BrightnessProxyPrivate::ensureProxy(this) << [=] {
     return BrightnessProxyPrivate::ensureBrightness(this);
   };
 }
