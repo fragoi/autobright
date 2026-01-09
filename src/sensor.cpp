@@ -12,6 +12,7 @@ struct SensorProxyPrivate {
     static void setProxy(SensorProxy *self, PGDBusProxy proxy);
     static void setLightLevel(SensorProxy *self, double value);
     static void setUnit(SensorProxy *self, const string &value);
+    static Promise<void> ensureProxy(SensorProxy *self);
     static Promise<void> ensureUnit(SensorProxy *self);
 };
 
@@ -97,6 +98,21 @@ void SensorProxyPrivate::setUnit(SensorProxy *self, const string &value) {
   }
 }
 
+Promise<void> SensorProxyPrivate::ensureProxy(SensorProxy *self) {
+  if (self->proxy)
+    return resolved();
+
+  Promise<PGDBusProxy> p = newForBus(
+      G_BUS_TYPE_SYSTEM,
+      "net.hadess.SensorProxy",
+      "/net/hadess/SensorProxy",
+      "net.hadess.SensorProxy");
+
+  return p << [=](PGDBusProxy proxy) {
+    SensorProxyPrivate::setProxy(self, proxy);
+  };
+}
+
 Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
   if (self->hasUnit())
     return resolved();
@@ -110,17 +126,7 @@ Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
 }
 
 Promise<void> SensorProxy::connect() {
-  if (this->proxy)
-    return resolved();
-
-  Promise<PGDBusProxy> p = newForBus(
-      G_BUS_TYPE_SYSTEM,
-      "net.hadess.SensorProxy",
-      "/net/hadess/SensorProxy",
-      "net.hadess.SensorProxy");
-
-  return p << [=](PGDBusProxy proxy) {
-    SensorProxyPrivate::setProxy(this, proxy);
+  return SensorProxyPrivate::ensureProxy(this) << [=]() {
     return SensorProxyPrivate::ensureUnit(this);
   };
 }
