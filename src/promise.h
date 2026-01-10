@@ -525,11 +525,6 @@ namespace _promise {
         return then<U>(forward<Fn>(fn), rethrow<U>);
       }
 
-//      template<typename Eh, typename U = TPromise<FnRet<Eh, exception_ptr>>>
-//      Promise<U> operator,(Eh &&eh) const {
-//        return grab<U>(forward<Eh>(eh));
-//      }
-
       template<typename >
       friend class Promise;
   };
@@ -601,14 +596,6 @@ namespace promise {
 
   using std::exception_ptr;
   using std::rethrow_exception;
-
-//  template<typename T>
-//  Promise<T> resolved(const T &value) {
-//    Result<T> result;
-//    Promise<T> promise = result;
-//    result.resolve(value);
-//    return promise;
-//  }
 
   template<typename T>
   Promise<T> resolved(T &&value) {
@@ -683,10 +670,6 @@ namespace promise {
       ResolveLatch(const Result<void> &result) :
           ptr(resultPtr(result), deleter) {
       }
-
-//      template<typename ...Args>
-//      void operator()(Args &&...args) {
-//      }
 
       void operator()(...) {
       }

@@ -95,9 +95,6 @@ Promise<void> IdleAwarePrivate::updateIdle(IdleAware *self) {
 }
 
 Promise<void> IdleAwarePrivate::updateInactive(IdleAware *self) {
-//  if (!(self->flags & IdleAware::IDLE)
-//      || (self->flags & IdleAware::INACTIVE))
-//    return resolved();
   if (self->flags != IdleAware::IDLE)
     return resolved();
 
