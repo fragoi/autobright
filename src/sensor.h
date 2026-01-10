@@ -21,6 +21,13 @@ class SensorProxy {
     Unit unit = UNKNOWN;
 
   public:
+
+    /**
+     * Ping the service.
+     * This ensures that the service actually exists.
+     */
+    static promise::Promise<void> pingService();
+
     signals::Signal<void()> lightLevelChanged;
 
     promise::Promise<void> connect();

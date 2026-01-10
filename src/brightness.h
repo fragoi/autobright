@@ -21,6 +21,13 @@ class BrightnessProxy: public IBrightnessProxy {
     int brightness = -1;
 
   public:
+
+    /**
+     * Ping the service.
+     * This ensures that the service actually exists.
+     */
+    static promise::Promise<void> pingService();
+
     promise::Promise<void> connect();
     promise::Promise<void> setBrightness(int);
     int getBrightness() const;

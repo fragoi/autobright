@@ -98,6 +98,20 @@ namespace gdbus {
     return promise;
   }
 
+  Promise<void> ping(
+      PGDBusProxy proxy,
+      GDBusCallFlags flags,
+      int timeout,
+      GCancellable *cancellable) {
+    return call(
+        proxy,
+        "org.freedesktop.DBus.Peer.Ping",
+        nullptr,
+        flags,
+        timeout,
+        cancellable);
+  }
+
   template<>
   void gVariantGet<void>(GVariant*) {
   }

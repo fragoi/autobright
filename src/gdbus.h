@@ -33,6 +33,12 @@ namespace gdbus {
       int timeout = -1,
       GCancellable *cancellable = NULL);
 
+  Promise<void> ping(
+      PGDBusProxy proxy,
+      GDBusCallFlags flags = G_DBUS_CALL_FLAGS_NONE,
+      int timeout = -1,
+      GCancellable *cancellable = NULL);
+
   template<typename T>
   T gVariantGet(GVariant*);
 

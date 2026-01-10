@@ -42,6 +42,14 @@ struct IdleMonitorProxyPrivate {
         int newKey);
 };
 
+static Promise<PGDBusProxy> newProxy() {
+  return newForBus(
+      G_BUS_TYPE_SESSION,
+      "org.gnome.Mutter.IdleMonitor",
+      "/org/gnome/Mutter/IdleMonitor/Core",
+      "org.gnome.Mutter.IdleMonitor");
+}
+
 static void onSignal(
     GDBusProxy *proxy,
     const gchar *sender_name,
@@ -175,17 +183,17 @@ bool IdleMonitorProxyPrivate::compareAndSetKey(
   return true;
 }
 
+Promise<void> IdleMonitorProxy::pingService() {
+  return newProxy() << [](PGDBusProxy proxy) {
+    return ping(proxy);
+  };
+}
+
 Promise<void> IdleMonitorProxy::connect() {
   if (proxy)
     return resolved();
 
-  Promise<PGDBusProxy> p = newForBus(
-      G_BUS_TYPE_SESSION,
-      "org.gnome.Mutter.IdleMonitor",
-      "/org/gnome/Mutter/IdleMonitor/Core",
-      "org.gnome.Mutter.IdleMonitor");
-
-  return p << [=](PGDBusProxy proxy) {
+  return newProxy() << [=](PGDBusProxy proxy) {
     IdleMonitorProxyPrivate::setProxy(this, proxy);
   };
 }

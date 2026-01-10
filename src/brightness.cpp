@@ -27,6 +27,14 @@ struct ResolveOnEmit {
     }
 };
 
+static Promise<PGDBusProxy> newProxy() {
+  return newForBus(
+      G_BUS_TYPE_SESSION,
+      "org.gnome.SettingsDaemon.Power",
+      "/org/gnome/SettingsDaemon/Power",
+      "org.gnome.SettingsDaemon.Power.Screen");
+}
+
 inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {
   PUGVariant brightness(g_dbus_proxy_get_cached_property(proxy, "Brightness"));
   if (brightness) {
@@ -79,13 +87,7 @@ Promise<void> BrightnessProxyPrivate::ensureProxy(BrightnessProxy *self) {
   if (self->proxy)
     return resolved();
 
-  Promise<PGDBusProxy> p = newForBus(
-      G_BUS_TYPE_SESSION,
-      "org.gnome.SettingsDaemon.Power",
-      "/org/gnome/SettingsDaemon/Power",
-      "org.gnome.SettingsDaemon.Power.Screen");
-
-  return p << [=](PGDBusProxy proxy) {
+  return newProxy() << [=](PGDBusProxy proxy) {
     BrightnessProxyPrivate::setProxy(self, proxy);
   };
 }
@@ -102,6 +104,12 @@ Promise<void> BrightnessProxyPrivate::ensureBrightness(BrightnessProxy *self) {
       &self->brightnessChanged, result
   };
   return promise;
+}
+
+Promise<void> BrightnessProxy::pingService() {
+  return newProxy() << [](PGDBusProxy proxy) {
+    return ping(proxy);
+  };
 }
 
 Promise<void> BrightnessProxy::connect() {

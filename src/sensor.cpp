@@ -30,6 +30,14 @@ struct ResolveOnUnit {
     }
 };
 
+static Promise<PGDBusProxy> newProxy() {
+  return newForBus(
+      G_BUS_TYPE_SYSTEM,
+      "net.hadess.SensorProxy",
+      "/net/hadess/SensorProxy",
+      "net.hadess.SensorProxy");
+}
+
 inline static void updateLightLevel(SensorProxy *self, GDBusProxy *proxy) {
   PUGVariant lightLevel(g_dbus_proxy_get_cached_property(proxy, "LightLevel"));
   if (lightLevel) {
@@ -102,13 +110,7 @@ Promise<void> SensorProxyPrivate::ensureProxy(SensorProxy *self) {
   if (self->proxy)
     return resolved();
 
-  Promise<PGDBusProxy> p = newForBus(
-      G_BUS_TYPE_SYSTEM,
-      "net.hadess.SensorProxy",
-      "/net/hadess/SensorProxy",
-      "net.hadess.SensorProxy");
-
-  return p << [=](PGDBusProxy proxy) {
+  return newProxy() << [=](PGDBusProxy proxy) {
     SensorProxyPrivate::setProxy(self, proxy);
   };
 }
@@ -123,6 +125,12 @@ Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
       self, &self->lightLevelChanged, result
   };
   return promise;
+}
+
+Promise<void> SensorProxy::pingService() {
+  return newProxy() << [](PGDBusProxy proxy) {
+    return ping(proxy);
+  };
 }
 
 Promise<void> SensorProxy::connect() {

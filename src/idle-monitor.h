@@ -59,6 +59,13 @@ class IdleMonitorProxy {
     promise::Promise<int> addUserActiveWatch();
 
   public:
+
+    /**
+     * Ping the service.
+     * This ensures that the service actually exists.
+     */
+    static promise::Promise<void> pingService();
+
     promise::Promise<void> connect();
     promise::Promise<long> getIdleTime();
 

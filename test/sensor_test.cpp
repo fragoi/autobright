@@ -3,12 +3,13 @@
 #include <iostream>
 
 #include <src/sensor.h>
+#include <src/logger.h>
 
 using namespace std;
 
 int main() {
   bool emitted = false;
-  exception_ptr exception;
+  bool cannotConnect = false;
   GMainLoop *loop = g_main_loop_new(NULL, FALSE);
 
   SensorProxy proxy;
@@ -18,18 +19,25 @@ int main() {
     emitted = true;
   };
 
-  proxy.connect().then([] {
+  auto promise = SensorProxy::pingService() << [&] {
+    return proxy.connect();
+  };
+
+  promise.then([] {
     cout << "Connected" << endl;
   }, [&](exception_ptr ex) {
-    exception = ex;
+    cerr << "Cannot connect: " << ex << endl;
+    cannotConnect = true;
   }) << [&] {
     g_main_loop_quit(loop);
   };
 
   g_main_loop_run(loop);
 
-  if (exception)
-    rethrow_exception(exception);
+  if (cannotConnect) {
+    /* skipped */
+    return 77;
+  }
 
   assert(emitted);
 

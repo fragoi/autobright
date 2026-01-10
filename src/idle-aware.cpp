@@ -140,6 +140,12 @@ string IdleAwarePrivate::flagsToString(int flags) {
   return s;
 }
 
+Promise<void> IdleAware::pingService() {
+  return BrightnessProxy::pingService() << [] {
+    return IdleMonitorProxy::pingService();
+  };
+}
+
 IdleAware::IdleAware() {
   proxy.brightnessChanged << [=] {
     IdleAwarePrivate::onBrightnessChanged(this);

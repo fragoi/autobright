@@ -26,6 +26,13 @@ class IdleAware: public IBrightnessProxy {
     int inactiveCount = 0;
 
   public:
+
+    /**
+     * Ping the service.
+     * This ensures that the service actually exists.
+     */
+    static promise::Promise<void> pingService();
+
     IdleAware();
     ~IdleAware();
 
