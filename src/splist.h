@@ -23,7 +23,7 @@ namespace _splist {
   };
 
   template<typename T>
-  class Iterator: public std::iterator<std::forward_iterator_tag, T> {
+  class Iterator {
       using N = Node<T>;
       using P = shared_ptr<N>;
 
