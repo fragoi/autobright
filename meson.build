@@ -101,6 +101,10 @@ install_subdir('debugui',
   install_dir: prvdir
 )
 
+install_subdir('data/icons',
+  install_dir: prvdir
+)
+
 subdir('data' / 'desktop')
 subdir('data' / 'schemas')
 subdir('data' / 'systemd')

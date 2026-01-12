@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=@exec@
-Icon=display-brightness-symbolic
+Icon=@icon@
 
 Name=Autobright
 
