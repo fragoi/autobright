@@ -32,7 +32,8 @@ static Promise<PGDBusProxy> newProxy() {
       G_BUS_TYPE_SESSION,
       "org.gnome.SettingsDaemon.Power",
       "/org/gnome/SettingsDaemon/Power",
-      "org.gnome.SettingsDaemon.Power.Screen");
+      "org.gnome.SettingsDaemon.Power.Screen",
+      G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START);
 }
 
 inline static void updateBrightness(BrightnessProxy *self, GDBusProxy *proxy) {

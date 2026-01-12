@@ -1,12 +1,9 @@
 [Unit]
 Description=Automatic Brightness
 
-Requisite=gsd-power.service
-After=gsd-power.service
-
 [Service]
 Type=exec
 ExecStart=autobright
 
 [Install]
-WantedBy=gsd-power.service
+WantedBy=graphical-session.target
