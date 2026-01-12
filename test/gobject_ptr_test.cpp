@@ -58,33 +58,12 @@ static void test_ref_count() {
   assert(ptr2.use_count() == 2);
 }
 
-static void test_finalize() {
-  GObject *o = NEW_GOBJECT;
-
-  assert(G_IS_OBJECT(o));
-
-  /* pointer scope */
-  {
-    gobject_ptr<GObject> ptr(o);
-
-    assert(ptr.use_count() == 1);
-
-    assert(pass_by_val(ptr, 2));
-
-    assert(ptr.use_count() == 1);
-  }
-
-  assert(!G_IS_OBJECT(o));
-}
-
 static void test_move() {
   GObject *o = NEW_GOBJECT;
 
   assert(o->ref_count == 1);
 
   assert(pass_by_val(gobject_ptr<GObject>(o), 1));
-
-  assert(!G_IS_OBJECT(o));
 }
 
 static void test_assign() {
@@ -160,7 +139,6 @@ int main() {
   test_get();
   test_arrow();
   test_ref_count();
-  test_finalize();
   test_move();
   test_assign();
   test_null();

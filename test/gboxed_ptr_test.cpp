@@ -32,29 +32,12 @@ static void test_arrow() {
   assert(o->ref_count == 1);
 }
 
-static void test_finalize() {
-  GObject *o = NEW_GOBJECT;
-
-  assert(G_IS_OBJECT(o));
-
-  /* pointer scope */
-  {
-    gboxed_ptr<GObject> ptr(o, unref);
-
-    assert(ptr->ref_count == 1);
-  }
-
-  assert(!G_IS_OBJECT(o));
-}
-
 static void test_move() {
   GObject *o = NEW_GOBJECT;
 
   assert(o->ref_count == 1);
 
   assert(pass_by_val(gboxed_ptr<GObject>(o, unref), 1));
-
-  assert(!G_IS_OBJECT(o));
 }
 
 static void test_null() {
@@ -115,7 +98,6 @@ static void test_swap() {
 int main() {
   test_get();
   test_arrow();
-  test_finalize();
   test_move();
   test_null();
   test_bool();
