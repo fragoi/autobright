@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=@exec@
+Exec=gjs @exec@
 Icon=@icon@
 
 Name=Autobright
