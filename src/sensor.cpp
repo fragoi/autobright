@@ -8,12 +8,22 @@ using namespace gdbus;
 using namespace promise;
 using namespace signals;
 
+static const Method<void()> _claimLight {
+    "ClaimLight"
+};
+
+static const Method<void()> _releaseLight {
+    "ReleaseLight"
+};
+
 struct SensorProxyPrivate {
     static void setProxy(SensorProxy *self, PGDBusProxy proxy);
     static void setLightLevel(SensorProxy *self, double value);
     static void setUnit(SensorProxy *self, const string &value);
     static Promise<void> ensureProxy(SensorProxy *self);
     static Promise<void> ensureUnit(SensorProxy *self);
+    static Promise<void> claimLight(SensorProxy *self);
+    static Promise<void> releaseLight(SensorProxy *self);
 };
 
 struct ResolveOnUnit {
@@ -127,14 +137,30 @@ Promise<void> SensorProxyPrivate::ensureUnit(SensorProxy *self) {
   return promise;
 }
 
+Promise<void> SensorProxyPrivate::claimLight(SensorProxy *self) {
+  return _claimLight(self->proxy);
+}
+
+Promise<void> SensorProxyPrivate::releaseLight(SensorProxy *self) {
+  return _releaseLight(self->proxy);
+}
+
 Promise<void> SensorProxy::pingService() {
   return newProxy() << [](PGDBusProxy proxy) {
     return ping(proxy);
   };
 }
 
+SensorProxy::~SensorProxy() {
+  if (proxy) {
+    SensorProxyPrivate::releaseLight(this).grab(PROMISE_LOG_EX);
+  }
+}
+
 Promise<void> SensorProxy::connect() {
   return SensorProxyPrivate::ensureProxy(this) << [=] {
+    return SensorProxyPrivate::claimLight(this);
+  } << [=] {
     return SensorProxyPrivate::ensureUnit(this);
   };
 }

@@ -30,6 +30,8 @@ class SensorProxy {
 
     signals::Signal<void()> lightLevelChanged;
 
+    ~SensorProxy();
+
     promise::Promise<void> connect();
     double getLightLevel() const;
     Unit getUnit() const;
