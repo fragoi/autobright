@@ -1,6 +1,8 @@
 [Unit]
 Description=Automatic Brightness
 
+PartOf=graphical-session.target
+
 [Service]
 Type=exec
 ExecStart=autobright
